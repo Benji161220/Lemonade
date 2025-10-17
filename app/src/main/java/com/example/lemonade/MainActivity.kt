@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.lemonade.ui.theme.LemonadeTheme
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +46,7 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun LemonApp(){
         var currentStep by remember { mutableStateOf(1) }
+        var squeezesLeft by remember { mutableStateOf(0)}
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -63,6 +66,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .wrapContentSize()
                                 .clickable {
+                                    squeezesLeft = Random.nextInt(2,7)
                                     currentStep = 2
                                 }
                         )
@@ -81,6 +85,50 @@ class MainActivity : ComponentActivity() {
                             painter = painterResource(R.drawable.lemon_squeeze),
                             contentDescription = stringResource(R.string.keep_tapping),
                             modifier = Modifier.wrapContentSize()
+                                .clickable {
+                                    squeezesLeft--
+                                    if (squeezesLeft <= 0) {
+                                        currentStep = 3
+                                    }
+                                }
+                        )
+                    }
+                }
+                3 -> {
+                    Column (
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ){
+                        Text(text = stringResource(R.string.Glass_of_lemonade))
+                        Spacer(modifier = Modifier.height(32
+                            .dp))
+                        Image(
+                            painter = painterResource(R.drawable.lemon_drink),
+                            contentDescription = stringResource(R.string.Glass_of_lemonade),
+                            modifier = Modifier.wrapContentSize()
+                                .clickable {
+                                    currentStep = 4
+                                }
+                        )
+                    }
+                }
+                4 -> {
+                    Column (
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ){
+                        Text(text = stringResource(R.string.Empty_glass))
+                        Spacer(modifier = Modifier.height(32
+                            .dp))
+                        Image(
+                            painter = painterResource(R.drawable.lemon_restart),
+                            contentDescription = stringResource(R.string.Empty_glass),
+                            modifier = Modifier.wrapContentSize()
+                                .clickable {
+                                    currentStep = 1
+                                }
                         )
                     }
                 }
